@@ -1,8 +1,7 @@
 from django.shortcuts import render
-
+import difflib
 from . import util
 import markdown2
-
 
 def index(request):
     return render(request, "encyclopedia/index.html", {
@@ -19,3 +18,12 @@ def entry(request, title):
         "title": title,
         "content": html
     })
+def search(request):
+    query=request.GET.get("q", "")
+    entries=util.list_entries()
+    if query in entries:
+        return entry(request, query)
+    else:
+        matches=difflib.get_close_matches(query, entries)
+        return entry(request, matches[0] if matches else query)
+        
