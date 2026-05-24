@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 import difflib
 from . import util
 import markdown2
@@ -26,4 +26,19 @@ def search(request):
     else:
         matches=difflib.get_close_matches(query, entries)
         return entry(request, matches[0] if matches else query)
-        
+def new_page(request):
+    if request.method == "POST":
+        title = request.POST.get("title", "").strip()
+        content = request.POST.get("content", "").strip()
+
+        if not title or not content:
+            return render(request, "encyclopedia/new_page.html", {
+                "error": "Title and content are required.",
+                "title": title,
+                "content": content
+            })
+
+        util.save_entry(title, content)
+        return redirect('entry', title=title)
+
+    return render(request, "encyclopedia/new_page.html")
