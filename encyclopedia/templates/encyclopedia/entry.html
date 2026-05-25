@@ -8,5 +8,8 @@
 
     <h1>{{ title }}</h1>
     <p>{{ content }}</p>
+    <form action="{% url 'edit_page' title=title %}" method="get">
+        <button type="submit" class="btn btn-secondary">Edit</button>
+    </form>
 
 {% endblock %}

@@ -37,8 +37,37 @@ def new_page(request):
                 "title": title,
                 "content": content
             })
+        elif title in util.list_entries():
+            return render(request, "encyclopedia/new_page.html", {
+                "error": "An entry with this title already exists.",
+                "title": title,
+                "content": content
+            })
 
         util.save_entry(title, content)
         return redirect('entry', title=title)
 
     return render(request, "encyclopedia/new_page.html")
+def edit_page(request, title):
+    if request.method == "POST":
+        content = request.POST.get("content", "").strip()
+
+        if not content:
+            return render(request, "encyclopedia/edit_page.html", {
+                "error": "Content is required.",
+                "title": title,
+                "content": content
+            })
+
+        util.save_entry(title, content)
+        return redirect('entry', title=title)
+
+    content = util.get_entry(title)
+    if content is None:
+        return render(request, "encyclopedia/error.html", {
+            "message": "The requested page was not found."
+        })
+    return render(request, "encyclopedia/edit_page.html", {
+        "title": title,
+        "content": content
+    })
