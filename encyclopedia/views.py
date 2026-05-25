@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 import difflib
+import random
 from . import util
 import markdown2
 
@@ -18,6 +19,15 @@ def entry(request, title):
         "title": title,
         "content": html
     })
+def random_page(request):
+    entries = util.list_entries()
+    if not entries:
+        return render(request, "encyclopedia/error.html", {
+            "message": "No encyclopedia entries are available."
+        })
+    title = random.choice(entries)
+    return redirect('entry', title=title)
+
 def search(request):
     query=request.GET.get("q", "")
     entries=util.list_entries()
