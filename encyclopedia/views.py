@@ -3,6 +3,7 @@ import difflib
 import random
 from . import util
 import markdown2
+from django.core.files.storage import default_storage
 
 def index(request):
     return render(request, "encyclopedia/index.html", {
@@ -91,3 +92,7 @@ def edit_page(request, title):
         "title": title,
         "content": content
     })
+def delete_page(request, title):
+    if request.method == "POST":
+        default_storage.delete(f"entries/{title}.md")
+        return redirect('index')

@@ -11,5 +11,10 @@
     <form action="{% url 'edit_page' title=title %}" method="get">
         <button type="submit" class="btn btn-secondary">Edit</button>
     </form>
+    <form action="{% url 'delete_page' title=title %}" method="post" onsubmit="return confirm('Are you sure you want to delete this page?');">
+
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Delete</button>
+    </form>
 
 {% endblock %}
