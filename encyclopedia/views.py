@@ -29,13 +29,23 @@ def random_page(request):
     return redirect('entry', title=title)
 
 def search(request):
-    query=request.GET.get("q", "")
-    entries=util.list_entries()
-    if query in entries:
-        return entry(request, query)
-    else:
-        matches=difflib.get_close_matches(query, entries)
-        return entry(request, matches[0] if matches else query)
+    query = request.GET.get("q", "").strip()
+    if not query:
+        return redirect('index')
+
+    entries = util.list_entries()
+
+    # Exact match (case-insensitive) -> redirect to that entry's page
+    for e in entries:
+        if e.lower() == query.lower():
+            return redirect('entry', title=e)
+
+    # Substring (case-insensitive) matches -> show results page
+    matches = [e for e in entries if query.lower() in e.lower()]
+    return render(request, "encyclopedia/search_results.html", {
+        "query": query,
+        "matches": matches
+    })
 def new_page(request):
     if request.method == "POST":
         title = request.POST.get("title", "").strip()
@@ -47,7 +57,7 @@ def new_page(request):
                 "title": title,
                 "content": content
             })
-        elif title in util.list_entries():
+        elif any(e.lower() == title.lower() for e in util.list_entries()):
             return render(request, "encyclopedia/new_page.html", {
                 "error": "An entry with this title already exists.",
                 "title": title,

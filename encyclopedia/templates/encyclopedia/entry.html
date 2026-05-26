@@ -7,7 +7,7 @@
 {% block body %}
 
     <h1>{{ title }}</h1>
-    <p>{{ content }}</p>
+    <div>{{ content|safe }}</div>
     <form action="{% url 'edit_page' title=title %}" method="get">
         <button type="submit" class="btn btn-secondary">Edit</button>
     </form>
