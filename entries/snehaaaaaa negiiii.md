@@ -1,0 +1,1 @@
+mitriooo m aajse padie karungi
